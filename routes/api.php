@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +19,16 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+//User Routes
+
+Route::post('add/user',[UserController::class,'store'])->name('user.store');
+Route::post('update/user',[UserController::class,'update'])->name('user.update');
+Route::delete('delete/user/{id}',[UserController::class,'destroy'])->name('user.destroy');
+
+
+//Permission Routes
+
+Route::post('add/permission',[PermissionController::class,'store'])->name('store.permission');
+Route::post('update/permission',[PermissionController::class,'update'])->name('permission.update');
+Route::delete('delete/permission/{id}',[PermissionController::class,'destroy'])->name('destroy.permission');
