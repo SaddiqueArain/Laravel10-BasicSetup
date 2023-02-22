@@ -4,14 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Notifications\Usernotification;
+use App\Traits\ApiResponseTraits;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
-
+use App\Traits\AuthTrait;
 class UserController extends Controller
 {
+    use AuthTrait, ApiResponseTraits;
     /**
      * Display a listing of the resource.
      */
@@ -74,9 +76,10 @@ class UserController extends Controller
 
         $user->notify(new Usernotification());
 
+        return $this->successResponse($user,'User Created');
 
 
-        return 'User Added';
+//        return 'User Added';
     }
 
     /**
@@ -140,7 +143,8 @@ class UserController extends Controller
 
         $data->save();
 
-        return 'User Updated';
+        return $this->successResponse(null,'User Created');
+
 
 
     }
@@ -151,7 +155,21 @@ class UserController extends Controller
     public function destroy($id)
     {
         $data=User::find($id);
-        $data->delete();
-        return 'Deleted';
+        $check=$data->delete();
+        if ($check){
+            return $this->successResponse(null,'No.'.$id.' User Deleted');
+        }
+        else{
+            return $this->errorResponse("User Not Exit",401);
+
+        }
+
+    }
+
+
+    public function data()
+    {
+
+        return $this->authuser();
     }
 }
