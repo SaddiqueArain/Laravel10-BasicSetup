@@ -2,20 +2,13 @@
 
 namespace App\Nova;
 
-use App\Nova\Actions\ApproveUser;
-use App\Nova\Actions\UnApprovedUser;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rules;
-use Laravel\Nova\Fields\BelongsToMany;
-use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Gravatar;
-use Laravel\Nova\Fields\HasMany;
-use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class User extends Resource
+class ManageAccount extends Resource
 {
     /**
      * The model the resource corresponds to.
@@ -29,7 +22,7 @@ class User extends Resource
      *
      * @var string
      */
-    public static $title = 'name';
+    public static $title = 'id';
 
     /**
      * The columns that should be searched.
@@ -37,9 +30,8 @@ class User extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name', 'email',
+        'id',
     ];
-
 
     /**
      * Get the fields displayed by the resource.
@@ -50,33 +42,17 @@ class User extends Resource
     public function fields(NovaRequest $request)
     {
         return [
-            ID::make()->sortable(),
-
-//            Gravatar::make()->maxWidth(50),
-
-            Text::make('Name')
+            Gravatar::make(),
+            Text::make(__('Name'), 'name')
                 ->sortable()
                 ->rules('required', 'max:255'),
-
-            Text::make('Email')
+            Text::make(__('Email'), 'email')
                 ->sortable()
-                ->rules('required', 'email', 'max:254')
-                ->creationRules('unique:users,email')
-                ->updateRules('unique:users,email,{{resourceId}}'),
-
-
-            Password::make('Password')
+                ->rules('required', 'email', 'max:255'),
+            Password::make(__('Password'), 'password')
                 ->onlyOnForms()
-                ->creationRules('required', Rules\Password::defaults())
-                ->updateRules('nullable', Rules\Password::defaults()),
-            boolean::make('Active')
-                ->trueValue('Yes')
-                ->falseValue('No'),
-            Boolean::make('Is Admin'),
-
-
-            HasMany::make('appointment'),
-            BelongsToMany::make('Roles')
+                ->creationRules('required', 'string', 'min:8')
+                ->updateRules('nullable', 'string', 'min:8'),
         ];
     }
 
@@ -119,10 +95,10 @@ class User extends Resource
      * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
      * @return array
      */
-    public function actions(NovaRequest $request)
+    public function actions(Request $request)
     {
-        return [new ApproveUser, new UnApprovedUser];
+        return [
+        ];
     }
-
 
 }

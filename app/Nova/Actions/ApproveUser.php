@@ -2,6 +2,7 @@
 
 namespace App\Nova\Actions;
 
+use App\Notifications\UserApprovedNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -10,7 +11,7 @@ use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class UnPublishedUser extends Action
+class ApproveUser extends Action
 {
     use InteractsWithQueue, Queueable;
 
@@ -25,10 +26,10 @@ class UnPublishedUser extends Action
     {
         foreach ($models as $model){
             $model->update([
-                'active' => 'No'
+                'active' => 'Yes',
+
             ]);
         }
-        return Action::danger("You ARE NOT PUBLISHED");
     }
 
     /**

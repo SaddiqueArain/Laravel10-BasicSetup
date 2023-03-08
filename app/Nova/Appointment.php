@@ -2,34 +2,33 @@
 
 namespace App\Nova;
 
-use App\Nova\Actions\ApproveUser;
-use App\Nova\Actions\UnApprovedUser;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rules;
-use Laravel\Nova\Fields\BelongsToMany;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\Gravatar;
-use Laravel\Nova\Fields\HasMany;
+use Laravel\Nova\Fields\Date;
+use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Textarea;
+use Laravel\Nova\Fields\Timezone;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class User extends Resource
+class Appointment extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\User>
+     * @var class-string<\App\Models\Appointment>
      */
-    public static $model = \App\Models\User::class;
+    public static $model = \App\Models\Appointment::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = 'name';
+    public static $title = 'id';
 
     /**
      * The columns that should be searched.
@@ -37,9 +36,8 @@ class User extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name', 'email',
+        'id',
     ];
-
 
     /**
      * Get the fields displayed by the resource.
@@ -51,32 +49,14 @@ class User extends Resource
     {
         return [
             ID::make()->sortable(),
+            BelongsTo::make('User'),
+//            Boolean::make(__('Has Appointment'), function () {
+//                return $this->user()->exists();
+//            })->onlyOnIndex(),
 
-//            Gravatar::make()->maxWidth(50),
+            DateTime::make('start_time')->rules('required')->showOnPreview()->hideFromIndex(),
 
-            Text::make('Name')
-                ->sortable()
-                ->rules('required', 'max:255'),
-
-            Text::make('Email')
-                ->sortable()
-                ->rules('required', 'email', 'max:254')
-                ->creationRules('unique:users,email')
-                ->updateRules('unique:users,email,{{resourceId}}'),
-
-
-            Password::make('Password')
-                ->onlyOnForms()
-                ->creationRules('required', Rules\Password::defaults())
-                ->updateRules('nullable', Rules\Password::defaults()),
-            boolean::make('Active')
-                ->trueValue('Yes')
-                ->falseValue('No'),
-            Boolean::make('Is Admin'),
-
-
-            HasMany::make('appointment'),
-            BelongsToMany::make('Roles')
+            DateTime::make('end_time')->rules('required')->showOnPreview(),
         ];
     }
 
@@ -121,8 +101,19 @@ class User extends Resource
      */
     public function actions(NovaRequest $request)
     {
-        return [new ApproveUser, new UnApprovedUser];
+        return [];
     }
+    public function scopeForUser($query, User $user)
+    {
+        return $query->where('user_id', $user->id);
+    }
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        if (!Auth::user()->is_admin) {
+            $user_id = Auth::user()->id;
 
-
+            return $query->where('user_id', $user_id);
+        }
+        return $query;
+    }
 }

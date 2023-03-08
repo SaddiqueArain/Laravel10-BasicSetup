@@ -10,7 +10,7 @@ use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class PublishedUser extends Action
+class UnApprovedUser extends Action
 {
     use InteractsWithQueue, Queueable;
 
@@ -25,9 +25,10 @@ class PublishedUser extends Action
     {
         foreach ($models as $model){
             $model->update([
-                'active' => 'Yes'
+                'active' => 'No'
             ]);
         }
+        return Action::danger("You ARE NOT Approved");
     }
 
     /**

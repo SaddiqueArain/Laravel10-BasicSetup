@@ -17,8 +17,8 @@ abstract class Resource extends NovaResource
     public static function indexQuery(NovaRequest $request, $query)
     {
         return $query;
-    }
 
+    }
     /**
      * Build a Scout search query for the given resource.
      *
@@ -41,6 +41,7 @@ abstract class Resource extends NovaResource
     public static function detailQuery(NovaRequest $request, $query)
     {
         return parent::detailQuery($request, $query);
+
     }
 
     /**
@@ -56,4 +57,7 @@ abstract class Resource extends NovaResource
     {
         return parent::relatableQuery($request, $query);
     }
+
+
+
 }
