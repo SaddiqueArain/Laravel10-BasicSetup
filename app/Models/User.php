@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Anaseqal\NovaImport\Actions\Action;
+use App\Models\Appointment;
 
 class User extends Authenticatable
 {
@@ -56,10 +58,17 @@ class User extends Authenticatable
         return $this->belongsTo(Region::class,'region_id');
     }
 
-    public function roles()
+//    public function roles()
+//    {
+//        return $this->belongsToMany(Role::class);
+//    }
+
+
+    public function appointments()
     {
-        return $this->belongsToMany(Role::class);
+        return $this->hasMany(Appointment::class);
     }
+
 
 
     /**
