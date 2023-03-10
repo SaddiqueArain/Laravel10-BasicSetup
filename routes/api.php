@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\StudentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+Route::post('register',[StudentController::class,'register']);
+Route::get('show',[StudentController::class,'index']);
+Route::post('students/{id}',[StudentController::class,'update']);
+Route::delete('delete/{id}',[StudentController::class,'delete']);
